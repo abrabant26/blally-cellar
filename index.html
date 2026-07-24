@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Our Wine Cellar</title>
+<style>
+  :root {
+    color-scheme: light;
+    --wine: #6d1a36;
+    --wine-dark: #4a1024;
+    --wine-light: #8e2a4a;
+    --gold: #b8894a;
+    --cream: #faf6f0;
+    --card: #ffffff;
+    --ink: #2b2320;
+    --muted: #7a6f68;
+    --border: #e8ddd1;
+    --green: #3f7d45;
+    --green-bg: #e7f3e8;
+    --amber: #a56a1d;
+    --amber-bg: #fbeed9;
+    --blue: #3a5a8c;
+    --blue-bg: #e8eef8;
+    --gray-bg: #f0ece7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  header {
+    background: linear-gradient(135deg, var(--wine) 0%, var(--wine-dark) 100%);
+    color: #fff;
+    padding: 28px 32px 22px;
+  }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  header p.sub {
+    margin: 0;
+    opacity: 0.85;
+    font-size: 13.5px;
+  }
+  .stats {
+    display: flex;
+    gap: 14px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    padding: 10px 16px;
+    min-width: 110px;
+  }
+  .stat .num { font-size: 20px; font-weight: 700; line-height: 1.1; }
+  .stat .lbl { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px;}
+
+  .tabs {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 14px 24px 0;
+    display: flex;
+    gap: 8px;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 8px 4px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    color: var(--wine-dark);
+    border-bottom-color: var(--wine);
+  }
+
+  .toolbar {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 18px 24px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .toolbar input[type=text], .toolbar select {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+  .toolbar input[type=text] { flex: 1; min-width: 180px; }
+  .btn {
+    background: var(--wine);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn:hover { background: var(--wine-dark); }
+  .btn.secondary {
+    background: var(--card);
+    color: var(--wine);
+    border: 1px solid var(--wine);
+  }
+  .btn.secondary:hover { background: #fbeef2; }
+  .btn.ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn.small { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+  .btn.danger { color: #a3352b; border-color: #e3b9b3; background: #fff; }
+  .btn.danger:hover { background: #fdecea; }
+  .btn.ghost[aria-pressed="true"] { background: var(--wine); color: #fff; border-color: var(--wine); }
+
+  .group-section { margin-top: 26px; }
+  .group-section:first-of-type { margin-top: 8px; }
+  .group-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: 2px solid var(--wine);
+  }
+  .group-header h2 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--wine-dark);
+    font-weight: 700;
+  }
+  .group-header .count {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .log-entry {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--wine);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .log-entry .info h3 {
+    margin: 0 0 2px;
+    font-size: 15px;
+  }
+  .log-entry .info .meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .log-entry .info .notes {
+    font-size: 12.5px;
+    color: var(--ink);
+    font-style: italic;
+    max-width: 640px;
+  }
+  .log-entry .date-badge {
+    background: var(--gray-bg);
+    color: var(--wine-dark);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 18px 24px 60px;
+  }
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+  }
+  .card .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .card h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .card .producer {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .badge {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .badge.ready { background: var(--green-bg); color: var(--green); }
+  .badge.aging { background: var(--blue-bg); color: var(--blue); }
+  .badge.past { background: var(--amber-bg); color: var(--amber); }
+  .badge.none { background: var(--gray-bg); color: var(--muted); }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .meta-row span.tag {
+    background: var(--gray-bg);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .rating-num {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--wine);
+  }
+  .rating-word { font-size: 11.5px; color: var(--muted); }
+  .drink-window {
+    font-size: 12.5px;
+    color: var(--ink);
+  }
+  .notes {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.4;
+    max-height: 3.6em;
+    overflow: hidden;
+  }
+  .card .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .qty-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+  }
+  .qty-control button {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .card-actions { display: flex; gap: 6px; }
+
+  /* Modal */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(30,15,20,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 14px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 24px;
+  }
+  .modal h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: var(--wine-dark);
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+  label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  input, textarea, select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #fff;
+  }
+  textarea { resize: vertical; min-height: 50px; }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .footer-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+  .hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11.5px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍷 Our Wine Cellar</h1>
+  <p class="sub">flowvino.work — track what's in the rack, how it rated, and when to drink it.</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="tabs">
+  <button type="button" class="tab-btn active" id="tabCellarBtn">🍷 Cellar</button>
+  <button type="button" class="tab-btn" id="tabLogBtn">📖 Drink Log</button>
+</div>
+
+<div id="cellarView">
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Search by name, producer, varietal, region...">
+    <select id="filterStatus">
+      <option value="all">All statuses</option>
+      <option value="ready">Ready to drink</option>
+      <option value="aging">Still aging</option>
+      <option value="past">Past peak</option>
+      <option value="none">No window set</option>
+    </select>
+    <select id="filterGrape">
+      <option value="all">All grape types</option>
+    </select>
+    <select id="sortBy">
+      <option value="added_desc">Newest added</option>
+      <option value="name_asc">Name A–Z</option>
+      <option value="vintage_desc">Vintage (newest)</option>
+      <option value="vintage_asc">Vintage (oldest)</option>
+      <option value="rating_desc">Rating (high–low)</option>
+      <option value="drinkby_asc">Drink-by (soonest)</option>
+    </select>
+    <button class="btn ghost" id="groupToggle" type="button" aria-pressed="false">Group by grape</button>
+    <button class="btn" id="addBtn">+ Add Wine</button>
+  </div>
+
+  <main>
+    <div id="grid"></div>
+    <div class="empty" id="emptyMsg" style="display:none;">No wines match your filters yet.</div>
+
+    <div class="footer-bar">
+      <button class="btn secondary" id="exportBtn">⬇ Download wines.json (to publish)</button>
+      <button class="btn secondary" id="importBtn">Import a wines.json</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
+    </div>
+    <p class="hint">This page shows the last <strong>published</strong> version of the cellar. Changes you make here (add, edit, mark as drunk) stay on this device until you publish them: click "Download wines.json", then on GitHub upload that file into the <code>data/</code> folder of the <code>blally-cellar</code> repo, replacing the old one. The site updates within about a minute.</p>
+  </main>
+</div>
+
+<div id="logView" style="display:none;">
+  <div class="toolbar">
+    <input type="text" id="logSearch" placeholder="Search the drink log by wine, producer, notes...">
+    <select id="logSortBy">
+      <option value="date_desc">Newest drunk first</option>
+      <option value="date_asc">Oldest drunk first</option>
+      <option value="name_asc">Wine name A–Z</option>
+    </select>
+    <button class="btn" id="logAddBtn" type="button">+ Log a Tasting</button>
+  </div>
+  <main>
+    <div id="logList"></div>
+    <div class="empty" id="logEmptyMsg" style="display:none;">No tastings logged yet. Use "Mark as Drunk" on a wine, or "+ Log a Tasting" above.</div>
+    <div class="footer-bar">
+      <button class="btn secondary" id="logExportBtn">⬇ Download drink-log.json (to publish)</button>
+    </div>
+    <p class="hint">Publish the same way: upload the downloaded file into <code>data/</code> on GitHub, replacing <code>drink-log.json</code>.</p>
+  </main>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add Wine</h2>
+    <form id="wineForm">
+      <input type="hidden" id="wineId">
+      <div class="form-grid">
+        <div class="full">
+          <label>Name *</label>
+          <input type="text" id="f_name" required placeholder="e.g. Château Something">
+        </div>
+        <div>
+          <label>Producer</label>
+          <input type="text" id="f_producer">
+        </div>
+        <div>
+          <label>Vintage</label>
+          <input type="number" id="f_vintage" placeholder="e.g. 2019">
+        </div>
+        <div>
+          <label>Varietal / Blend detail</label>
+          <input type="text" id="f_varietal" placeholder="e.g. 90% Cabernet Sauvignon, 10% Merlot">
+        </div>
+        <div>
+          <label>Grape type (for grouping)</label>
+          <input type="text" id="f_grape" list="grapeOptions" placeholder="e.g. Cabernet Sauvignon">
+          <datalist id="grapeOptions"></datalist>
+        </div>
+        <div class="full">
+          <label>Region</label>
+          <input type="text" id="f_region" placeholder="e.g. Napa Valley, USA">
+        </div>
+        <div>
+          <label>Quantity (bottles)</label>
+          <input type="number" id="f_quantity" min="0" value="1">
+        </div>
+        <div>
+          <label>Price paid ($)</label>
+          <input type="number" id="f_price" step="0.01" min="0">
+        </div>
+        <div>
+          <label>Rating (1–100)</label>
+          <input type="number" id="f_rating" min="1" max="100">
+        </div>
+        <div>
+          <label>Drink from (year)</label>
+          <input type="number" id="f_drinkFrom">
+        </div>
+        <div>
+          <label>Drink by (year)</label>
+          <input type="number" id="f_drinkTo">
+        </div>
+        <div>
+          <label>Bin / Location</label>
+          <input type="text" id="f_bin" placeholder="e.g. Rack B, Shelf 3">
+        </div>
+        <div>
+          <label>Purchase date</label>
+          <input type="date" id="f_purchaseDate">
+        </div>
+        <div class="full">
+          <label>Purchase source</label>
+          <input type="text" id="f_purchaseSource" placeholder="e.g. Winery, K&L Wines, gift">
+        </div>
+        <div class="full">
+          <label>Tasting notes</label>
+          <textarea id="f_notes" placeholder="Notes, food pairings, who liked it..."></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn">Save Wine</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="overlay" id="logOverlay">
+  <div class="modal">
+    <h2 id="logModalTitle">Log a Tasting</h2>
+    <form id="logForm">
+      <input type="hidden" id="log_wineId">
+      <div class="form-grid">
+        <div class="full" id="log_wineDisplayWrap" style="display:none;">
+          <label>Wine</label>
+          <div id="log_wineDisplay" style="padding:8px 10px; background:var(--gray-bg); border-radius:8px; font-weight:600;"></div>
+        </div>
+        <div class="full" id="log_wineSelectWrap" style="display:none;">
+          <label>Wine *</label>
+          <select id="log_wineSelect"></select>
+        </div>
+        <div>
+          <label>Date drunk</label>
+          <input type="date" id="log_date">
+        </div>
+        <div>
+          <label>Bottle count</label>
+          <select id="log_decrement">
+            <option value="yes">Decrease by 1 bottle</option>
+            <option value="no">Don't change quantity</option>
+          </select>
+        </div>
+        <div class="full">
+          <label>Notes</label>
+          <textarea id="log_notes" placeholder="Occasion, who was there, how it tasted, food pairing..."></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="logCancelBtn">Cancel</button>
+        <button type="submit" class="btn">Save Entry</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'wine_cellar_data_v1';
+
+// Canonical reference data used both to seed a brand-new cellar and to patch
+// (without overwriting user edits) any fields that were missing in data
+// already saved in a browser's local storage from an earlier version of this app.
+function buildReferenceWines() {
+  return [
+    { id: cryptoId(), name: "La Bruja", producer: "Comando G", vintage: 2024, varietal: "Garnacha", grape: "Grenache / Garnacha", region: "Sierra de Gredos, Spain", quantity: 1, drinkFrom: 2025, drinkTo: 2032, notes: "Vino Regional bottling from Comando G. Added from a rack photo — double-check bottle count.", addedAt: Date.now() - 1000000 },
+    { id: cryptoId(), name: "Ferrington Vineyard Pinot Noir", producer: "Davies Vineyards", vintage: 2022, varietal: "Pinot Noir", grape: "Pinot Noir", region: "Anderson Valley, California", quantity: 1, drinkFrom: 2025, drinkTo: 2032, addedAt: Date.now() - 980000 },
+    { id: cryptoId(), name: "Clos d'Audignac, Volnay 1er Cru", producer: "Domaine de la Pousse d'Or", vintage: 2023, varietal: "Pinot Noir", grape: "Pinot Noir", region: "Volnay, Burgundy, France", quantity: 1, drinkFrom: 2028, drinkTo: 2038, addedAt: Date.now() - 960000 },
+    { id: cryptoId(), name: "Gevrey-Chambertin \"Vieilles Vignes\"", producer: "Domaine Faiveley", vintage: 2020, varietal: "Pinot Noir", grape: "Pinot Noir", region: "Gevrey-Chambertin, Burgundy, France", quantity: 1, drinkFrom: 2025, drinkTo: 2035, addedAt: Date.now() - 940000 },
+    { id: cryptoId(), name: "Reserva Tawny \"Choice\"", producer: "Quinta do Cachão (Vinhos Messias)", vintage: 2005, varietal: "Touriga Nacional, Touriga Franca, Tinta Roriz, Tinto Cão", grape: "Port Blend (Fortified)", region: "Douro, Portugal", quantity: 1, drinkFrom: 2010, drinkTo: 2045, notes: "Tawny Port — very long drinking window, ready any time.", addedAt: Date.now() - 920000 },
+    { id: cryptoId(), name: "Jayson Red Wine", producer: "Pahlmeyer", vintage: 2022, varietal: "51% Merlot, 27% Cabernet Sauvignon, 11% Malbec, 7% Petit Verdot, 4% Cabernet Franc", grape: "Bordeaux Blend (Merlot-based)", region: "Napa Valley, California", quantity: 1, drinkFrom: 2026, drinkTo: 2035, addedAt: Date.now() - 900000 },
+    { id: cryptoId(), name: "Santo Stefano Barbaresco", producer: "Castello di Neive", vintage: 2021, varietal: "Nebbiolo", grape: "Nebbiolo", region: "Barbaresco, Piedmont, Italy", quantity: 1, drinkFrom: 2028, drinkTo: 2041, addedAt: Date.now() - 880000 },
+    { id: cryptoId(), name: "Bourgogne Pinot Noir", producer: "Domaine Faiveley", vintage: 2023, varietal: "Pinot Noir", grape: "Pinot Noir", region: "Burgundy, France", quantity: 1, drinkFrom: 2025, drinkTo: 2031, addedAt: Date.now() - 860000 },
+    { id: cryptoId(), name: "Morey-Saint-Denis", producer: "Arnaud Pelletier", vintage: 2019, varietal: "Pinot Noir", grape: "Pinot Noir", region: "Morey-Saint-Denis, Burgundy, France", quantity: 1, drinkFrom: 2024, drinkTo: 2034, addedAt: Date.now() - 840000 },
+    { id: cryptoId(), name: "Estate Pinot Noir", producer: "Mount Eden Vineyards", vintage: 2019, varietal: "Pinot Noir", grape: "Pinot Noir", region: "Santa Cruz Mountains, California", quantity: 1, drinkFrom: 2023, drinkTo: 2031, addedAt: Date.now() - 820000 },
+    { id: cryptoId(), name: "Barolo", producer: "Oddero", vintage: 2021, varietal: "Nebbiolo", grape: "Nebbiolo", region: "Barolo, Piedmont, Italy", quantity: 1, drinkFrom: 2029, drinkTo: 2046, notes: "Check against the Freedom Beverage invoice — may be the same bottle as the Barolo Villero line item below.", addedAt: Date.now() - 800000 },
+    { id: cryptoId(), name: "Canta la Perdiz", producer: "Dominio del Águila", vintage: 2017, varietal: "Field blend: Tinto Fino (Tempranillo), Cariñena, Bruñal, Bobal, Albillo", grape: "Tempranillo Blend", region: "Ribera del Duero, Spain", quantity: 1, drinkFrom: 2022, drinkTo: 2035, notes: "Old-vine co-fermented field blend, aged 30 months in barrel.", addedAt: Date.now() - 780000 },
+    { id: cryptoId(), name: "Amarone della Valpolicella Classico", producer: "Le Ragose", vintage: 2021, varietal: "50% Corvina, 20% Corvinone, 20% Rondinella, 10% other", grape: "Corvina Blend (Amarone)", region: "Valpolicella, Veneto, Italy", quantity: 1, drinkFrom: 2027, drinkTo: 2041, addedAt: Date.now() - 760000 },
+    { id: cryptoId(), name: "Gran Reserva 904", producer: "La Rioja Alta, S.A.", vintage: 2016, varietal: "90% Tempranillo, 10% Graciano", grape: "Tempranillo Blend", region: "Rioja, Spain", quantity: 1, drinkFrom: 2024, drinkTo: 2041, notes: "Gran Reserva — extensive aging before release, drinks beautifully now.", addedAt: Date.now() - 740000 },
+    { id: cryptoId(), name: "Tanbark Hill Vineyard Cabernet Sauvignon", producer: "Philip Togni Vineyard", vintage: 2022, varietal: "Cabernet Sauvignon", grape: "Cabernet Sauvignon", region: "Spring Mountain District, Napa Valley, California", quantity: 1, drinkFrom: 2027, drinkTo: 2040, addedAt: Date.now() - 720000 },
+    { id: cryptoId(), name: "Châteauneuf-du-Pape", producer: "Domaine de Marcoux", vintage: 2021, varietal: "80% Grenache, 10% Mourvèdre, 7% Syrah, 3% Cinsault", grape: "Grenache Blend", region: "Châteauneuf-du-Pape, Rhône, France", quantity: 1, drinkFrom: 2025, drinkTo: 2038, addedAt: Date.now() - 700000 },
+    { id: cryptoId(), name: "Erbaluce di Caluso Metodo Classico", producer: "Bruno Giacometto", vintage: 2012, varietal: "100% Erbaluce", grape: "Erbaluce (Sparkling)", region: "Caluso, Piedmont, Italy", quantity: 1, price: 21.50, purchaseSource: "Freedom Beverage Company", purchaseDate: "2026-07-28", drinkFrom: 2014, drinkTo: 2027, notes: "Traditional-method Brut, min. 15 months on lees; producer rates aging potential at 10+ years from vintage.", addedAt: Date.now() - 680000 },
+    { id: cryptoId(), name: "Chablis Vaillons 1er Cru", producer: "Droin", vintage: 2023, varietal: "Chardonnay", grape: "Chardonnay", region: "Chablis, Burgundy, France", quantity: 1, price: 48.74, purchaseSource: "Freedom Beverage Company", purchaseDate: "2026-07-28", drinkFrom: 2025, drinkTo: 2033, addedAt: Date.now() - 660000 },
+    { id: cryptoId(), name: "Gigondas Réserve", producer: "Domaine des Bosquets", vintage: 2021, varietal: "Grenache-dominant (Grenache, Syrah, Mourvèdre, Cinsault)", grape: "Grenache Blend", region: "Gigondas, Rhône, France", quantity: 1, price: 34.00, purchaseSource: "Freedom Beverage Company", purchaseDate: "2026-07-28", drinkFrom: 2024, drinkTo: 2033, addedAt: Date.now() - 640000 },
+    { id: cryptoId(), name: "Barolo Villero", producer: "Oddero", vintage: 2021, varietal: "Nebbiolo", grape: "Nebbiolo", region: "Barolo (Villero cru), Piedmont, Italy", quantity: 1, price: 69.50, purchaseSource: "Freedom Beverage Company", purchaseDate: "2026-07-28", drinkFrom: 2029, drinkTo: 2046, notes: "Possible duplicate of the Oddero Barolo bottle from the rack photo — verify and delete one if it's the same wine.", addedAt: Date.now() - 620000 }
+  ];
+}
+
+// This is the PUBLISHED site. The source of truth is data/wines.json and
+// data/drink-log.json in this same repo — fetched fresh on every page load.
+// If those files can't be fetched (e.g. opened straight from disk instead of
+// through GitHub Pages), we fall back to whatever was last cached in this
+// browser, and finally to the built-in defaults below.
+
+async function loadWines() {
+  try {
+    const res = await fetch('./data/wines.json', { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        return data;
+      }
+    }
+  } catch (e) { /* fetch unavailable, e.g. file:// */ }
+
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try { return JSON.parse(raw); } catch (e) { /* fall through */ }
+  }
+  return buildReferenceWines();
+}
+
+function saveWines(wines) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(wines));
+}
+
+function cryptoId() {
+  return 'w_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+}
+
+const LOG_STORAGE_KEY = 'wine_cellar_drink_log_v1';
+
+async function loadDrinkLog() {
+  try {
+    const res = await fetch('./data/drink-log.json', { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(data));
+        return data;
+      }
+    }
+  } catch (e) { /* fetch unavailable, e.g. file:// */ }
+
+  const raw = localStorage.getItem(LOG_STORAGE_KEY);
+  if (raw) {
+    try { return JSON.parse(raw); } catch (e) { /* fall through */ }
+  }
+  return [];
+}
+
+function saveDrinkLog(log) {
+  localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(log));
+}
+
+let wines = [];
+let drinkLog = [];
+
+function currentYear() { return new Date().getFullYear(); }
+
+function getStatus(w) {
+  const y = currentYear();
+  if (!w.drinkFrom && !w.drinkTo) return { key: 'none', label: 'No window set' };
+  if (w.drinkFrom && y < w.drinkFrom) return { key: 'aging', label: `Aging (ready ${w.drinkFrom})` };
+  if (w.drinkTo && y > w.drinkTo) return { key: 'past', label: `Past peak (was ${w.drinkTo})` };
+  return { key: 'ready', label: 'Ready to drink' };
+}
+
+function ratingWord(r) {
+  if (!r) return '';
+  if (r >= 95) return 'Extraordinary';
+  if (r >= 90) return 'Outstanding';
+  if (r >= 85) return 'Very good';
+  if (r >= 80) return 'Good';
+  if (r >= 70) return 'Fair';
+  return 'Below average';
+}
+
+function escapeHtml(str) {
+  if (str === undefined || str === null) return '';
+  return String(str).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function renderStats() {
+  const totalBottles = wines.reduce((sum, w) => sum + (parseInt(w.quantity) || 0), 0);
+  const distinct = wines.length;
+  const rated = wines.filter(w => w.rating);
+  const avgRating = rated.length ? (rated.reduce((s,w) => s + Number(w.rating), 0) / rated.length).toFixed(1) : '—';
+  const readyNow = wines.filter(w => getStatus(w).key === 'ready').reduce((s,w)=>s+(parseInt(w.quantity)||0),0);
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="num">${totalBottles}</div><div class="lbl">Total bottles</div></div>
+    <div class="stat"><div class="num">${distinct}</div><div class="lbl">Distinct wines</div></div>
+    <div class="stat"><div class="num">${avgRating}</div><div class="lbl">Avg rating</div></div>
+    <div class="stat"><div class="num">${readyNow}</div><div class="lbl">Ready now (bottles)</div></div>
+    <div class="stat"><div class="num">${drinkLog.length}</div><div class="lbl">Tastings logged</div></div>
+  `;
+}
+
+let groupByGrape = false;
+
+function populateGrapeOptions() {
+  const grapes = Array.from(new Set(wines.map(w => (w.grape || '').trim()).filter(Boolean))).sort();
+  const filterSel = document.getElementById('filterGrape');
+  const currentVal = filterSel.value;
+  filterSel.innerHTML = '<option value="all">All grape types</option>' +
+    grapes.map(g => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`).join('');
+  if (grapes.includes(currentVal)) filterSel.value = currentVal;
+
+  const datalist = document.getElementById('grapeOptions');
+  datalist.innerHTML = grapes.map(g => `<option value="${escapeHtml(g)}">`).join('');
+}
+
+function applyFiltersAndSort(list) {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+  const grapeFilter = document.getElementById('filterGrape').value;
+  const sortBy = document.getElementById('sortBy').value;
+
+  let out = list.filter(w => {
+    if (statusFilter !== 'all' && getStatus(w).key !== statusFilter) return false;
+    if (grapeFilter !== 'all' && (w.grape || '') !== grapeFilter) return false;
+    if (!q) return true;
+    const hay = [w.name, w.producer, w.varietal, w.grape, w.region, w.notes].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+
+  out.sort((a, b) => {
+    switch (sortBy) {
+      case 'name_asc': return (a.name||'').localeCompare(b.name||'');
+      case 'vintage_desc': return (b.vintage||0) - (a.vintage||0);
+      case 'vintage_asc': return (a.vintage||0) - (b.vintage||0);
+      case 'rating_desc': return (b.rating||0) - (a.rating||0);
+      case 'drinkby_asc': return (a.drinkTo||9999) - (b.drinkTo||9999);
+      case 'added_desc':
+      default: return (b.addedAt||0) - (a.addedAt||0);
+    }
+  });
+  return out;
+}
+
+function cardHtml(w) {
+    const status = getStatus(w);
+    const drinkWindowText = (w.drinkFrom || w.drinkTo)
+      ? `Drink ${w.drinkFrom || '—'}–${w.drinkTo || '—'}`
+      : 'No drink window set';
+    return `
+      <div class="card">
+        <div class="top">
+          <div>
+            <h3>${escapeHtml(w.name)}${w.vintage ? ` <span style="color:var(--muted); font-weight:500;">'${String(w.vintage).slice(-2)}</span>` : ''}</h3>
+            <div class="producer">${escapeHtml(w.producer || '')}</div>
+          </div>
+          <span class="badge ${status.key}">${status.label}</span>
+        </div>
+        <div class="meta-row">
+          ${w.grape ? `<span class="tag" style="background:#f3e3ea; color:var(--wine-dark); font-weight:600;">🍇 ${escapeHtml(w.grape)}</span>` : ''}
+          ${w.region ? `<span class="tag">${escapeHtml(w.region)}</span>` : ''}
+          ${w.bin ? `<span class="tag">📍 ${escapeHtml(w.bin)}</span>` : ''}
+        </div>
+        ${w.varietal ? `<div class="drink-window" style="color:var(--muted);">${escapeHtml(w.varietal)}</div>` : ''}
+        ${w.rating ? `<div class="rating-row"><span class="rating-num">${w.rating}/100</span><span class="rating-word">${ratingWord(w.rating)}</span></div>` : ''}
+        <div class="drink-window">${drinkWindowText}</div>
+        ${w.notes ? `<div class="notes">${escapeHtml(w.notes)}</div>` : ''}
+        <div class="bottom">
+          <div class="qty-control">
+            <button type="button" onclick="adjustQty('${w.id}', -1)">−</button>
+            <span>${w.quantity ?? 0} bottle${(w.quantity===1) ? '' : 's'}</span>
+            <button type="button" onclick="adjustQty('${w.id}', 1)">+</button>
+          </div>
+          <div class="card-actions">
+            ${(w.quantity ?? 0) > 0 ? `<button class="btn small secondary" onclick="openLogForWine('${w.id}')">🍷 Mark as Drunk</button>` : ''}
+            <button class="btn small secondary" onclick="openEdit('${w.id}')">Edit</button>
+            <button class="btn small danger" onclick="deleteWine('${w.id}')">Delete</button>
+          </div>
+        </div>
+      </div>
+    `;
+}
+
+function render() {
+  renderStats();
+  populateGrapeOptions();
+  const list = applyFiltersAndSort(wines);
+  const grid = document.getElementById('grid');
+  const emptyMsg = document.getElementById('emptyMsg');
+
+  if (!list.length) {
+    grid.innerHTML = '';
+    emptyMsg.style.display = 'block';
+    return;
+  }
+  emptyMsg.style.display = 'none';
+
+  if (!groupByGrape) {
+    grid.innerHTML = `<div class="grid">${list.map(cardHtml).join('')}</div>`;
+    return;
+  }
+
+  const groups = new Map();
+  list.forEach(w => {
+    const key = (w.grape || '').trim() || 'Uncategorized';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(w);
+  });
+  const sortedKeys = Array.from(groups.keys()).sort((a, b) => a.localeCompare(b));
+
+  grid.innerHTML = sortedKeys.map(key => {
+    const items = groups.get(key);
+    return `
+      <div class="group-section">
+        <div class="group-header">
+          <h2>🍇 ${escapeHtml(key)}</h2>
+          <span class="count">${items.length} wine${items.length === 1 ? '' : 's'}</span>
+        </div>
+        <div class="grid">${items.map(cardHtml).join('')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function adjustQty(id, delta) {
+  const w = wines.find(x => x.id === id);
+  if (!w) return;
+  w.quantity = Math.max(0, (parseInt(w.quantity) || 0) + delta);
+  saveWines(wines);
+  render();
+}
+
+function deleteWine(id) {
+  if (!confirm('Remove this wine from the cellar?')) return;
+  wines = wines.filter(w => w.id !== id);
+  saveWines(wines);
+  render();
+}
+
+function openAdd() {
+  document.getElementById('modalTitle').textContent = 'Add Wine';
+  document.getElementById('wineForm').reset();
+  document.getElementById('wineId').value = '';
+  document.getElementById('f_quantity').value = 1;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function openEdit(id) {
+  const w = wines.find(x => x.id === id);
+  if (!w) return;
+  document.getElementById('modalTitle').textContent = 'Edit Wine';
+  document.getElementById('wineId').value = w.id;
+  document.getElementById('f_name').value = w.name || '';
+  document.getElementById('f_producer').value = w.producer || '';
+  document.getElementById('f_vintage').value = w.vintage || '';
+  document.getElementById('f_varietal').value = w.varietal || '';
+  document.getElementById('f_grape').value = w.grape || '';
+  document.getElementById('f_region').value = w.region || '';
+  document.getElementById('f_quantity').value = w.quantity ?? 1;
+  document.getElementById('f_price').value = w.price || '';
+  document.getElementById('f_rating').value = w.rating || '';
+  document.getElementById('f_drinkFrom').value = w.drinkFrom || '';
+  document.getElementById('f_drinkTo').value = w.drinkTo || '';
+  document.getElementById('f_bin').value = w.bin || '';
+  document.getElementById('f_purchaseDate').value = w.purchaseDate || '';
+  document.getElementById('f_purchaseSource').value = w.purchaseSource || '';
+  document.getElementById('f_notes').value = w.notes || '';
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10);
+}
+
+function openLogForWine(wineId) {
+  const w = wines.find(x => x.id === wineId);
+  if (!w) return;
+  document.getElementById('logModalTitle').textContent = 'Log a Tasting';
+  document.getElementById('log_wineId').value = w.id;
+  document.getElementById('log_wineDisplayWrap').style.display = 'block';
+  document.getElementById('log_wineDisplay').textContent = `${w.name}${w.vintage ? ' \'' + String(w.vintage).slice(-2) : ''} — ${w.producer || ''}`;
+  document.getElementById('log_wineSelectWrap').style.display = 'none';
+  document.getElementById('log_date').value = todayStr();
+  document.getElementById('log_decrement').value = 'yes';
+  document.getElementById('log_notes').value = '';
+  document.getElementById('logOverlay').classList.add('open');
+}
+
+function openLogGeneral() {
+  if (!wines.length) {
+    alert('Add a wine to your cellar first, then you can log a tasting for it.');
+    return;
+  }
+  document.getElementById('logModalTitle').textContent = 'Log a Tasting';
+  document.getElementById('log_wineId').value = '';
+  document.getElementById('log_wineDisplayWrap').style.display = 'none';
+  document.getElementById('log_wineSelectWrap').style.display = 'block';
+  const select = document.getElementById('log_wineSelect');
+  const sorted = [...wines].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  select.innerHTML = sorted.map(w => `<option value="${w.id}">${escapeHtml(w.name)}${w.vintage ? ' \'' + String(w.vintage).slice(-2) : ''} — ${escapeHtml(w.producer || '')}</option>`).join('');
+  document.getElementById('log_date').value = todayStr();
+  document.getElementById('log_decrement').value = 'yes';
+  document.getElementById('log_notes').value = '';
+  document.getElementById('logOverlay').classList.add('open');
+}
+
+function closeLogModal() {
+  document.getElementById('logOverlay').classList.remove('open');
+}
+
+function deleteLogEntry(id) {
+  if (!confirm('Remove this tasting entry from the log?')) return;
+  drinkLog = drinkLog.filter(e => e.id !== id);
+  saveDrinkLog(drinkLog);
+  renderLog();
+}
+
+function switchTab(tab) {
+  const cellarBtn = document.getElementById('tabCellarBtn');
+  const logBtn = document.getElementById('tabLogBtn');
+  const cellarView = document.getElementById('cellarView');
+  const logView = document.getElementById('logView');
+  if (tab === 'log') {
+    cellarBtn.classList.remove('active');
+    logBtn.classList.add('active');
+    cellarView.style.display = 'none';
+    logView.style.display = 'block';
+    renderLog();
+  } else {
+    logBtn.classList.remove('active');
+    cellarBtn.classList.add('active');
+    logView.style.display = 'none';
+    cellarView.style.display = 'block';
+  }
+}
+
+function logEntryHtml(e) {
+  const dateLabel = e.dateDrunk
+    ? new Date(e.dateDrunk + 'T00:00:00').toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+    : 'Undated';
+  return `
+    <div class="log-entry">
+      <div class="info">
+        <h3>${escapeHtml(e.wineName)}${e.vintage ? ` '${String(e.vintage).slice(-2)}` : ''}</h3>
+        <div class="meta">${escapeHtml(e.producer || '')}${e.grape ? ' · ' + escapeHtml(e.grape) : ''}</div>
+        ${e.notes ? `<div class="notes">${escapeHtml(e.notes)}</div>` : ''}
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+        <span class="date-badge">${dateLabel}</span>
+        <button class="btn small danger" onclick="deleteLogEntry('${e.id}')">Delete</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderLog() {
+  const q = document.getElementById('logSearch').value.trim().toLowerCase();
+  const sortBy = document.getElementById('logSortBy').value;
+
+  let list = drinkLog.filter(e => {
+    if (!q) return true;
+    const hay = [e.wineName, e.producer, e.grape, e.notes].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+
+  list.sort((a, b) => {
+    switch (sortBy) {
+      case 'date_asc': return (a.dateDrunk || '').localeCompare(b.dateDrunk || '');
+      case 'name_asc': return (a.wineName || '').localeCompare(b.wineName || '');
+      case 'date_desc':
+      default: return (b.dateDrunk || '').localeCompare(a.dateDrunk || '') || (b.loggedAt || 0) - (a.loggedAt || 0);
+    }
+  });
+
+  const logList = document.getElementById('logList');
+  const emptyMsg = document.getElementById('logEmptyMsg');
+  if (!list.length) {
+    logList.innerHTML = '';
+    emptyMsg.style.display = 'block';
+    return;
+  }
+  emptyMsg.style.display = 'none';
+  logList.innerHTML = list.map(logEntryHtml).join('');
+}
+
+document.getElementById('addBtn').addEventListener('click', openAdd);
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+document.getElementById('overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'overlay') closeModal();
+});
+
+document.getElementById('wineForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const id = document.getElementById('wineId').value;
+  const data = {
+    name: document.getElementById('f_name').value.trim(),
+    producer: document.getElementById('f_producer').value.trim(),
+    vintage: parseInt(document.getElementById('f_vintage').value) || null,
+    varietal: document.getElementById('f_varietal').value.trim(),
+    grape: document.getElementById('f_grape').value.trim(),
+    region: document.getElementById('f_region').value.trim(),
+    quantity: parseInt(document.getElementById('f_quantity').value) || 0,
+    price: parseFloat(document.getElementById('f_price').value) || null,
+    rating: parseInt(document.getElementById('f_rating').value) || null,
+    drinkFrom: parseInt(document.getElementById('f_drinkFrom').value) || null,
+    drinkTo: parseInt(document.getElementById('f_drinkTo').value) || null,
+    bin: document.getElementById('f_bin').value.trim(),
+    purchaseDate: document.getElementById('f_purchaseDate').value,
+    purchaseSource: document.getElementById('f_purchaseSource').value.trim(),
+    notes: document.getElementById('f_notes').value.trim()
+  };
+
+  if (!data.name) return;
+
+  if (id) {
+    const idx = wines.findIndex(w => w.id === id);
+    if (idx > -1) wines[idx] = { ...wines[idx], ...data };
+  } else {
+    wines.push({ id: cryptoId(), addedAt: Date.now(), ...data });
+  }
+  saveWines(wines);
+  closeModal();
+  render();
+});
+
+document.getElementById('tabCellarBtn').addEventListener('click', () => switchTab('cellar'));
+document.getElementById('tabLogBtn').addEventListener('click', () => switchTab('log'));
+
+document.getElementById('logAddBtn').addEventListener('click', openLogGeneral);
+document.getElementById('logCancelBtn').addEventListener('click', closeLogModal);
+document.getElementById('logOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'logOverlay') closeLogModal();
+});
+
+document.getElementById('logForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const explicitId = document.getElementById('log_wineId').value;
+  const wineId = explicitId || document.getElementById('log_wineSelect').value;
+  const w = wines.find(x => x.id === wineId);
+  if (!w) return;
+
+  const entry = {
+    id: cryptoId(),
+    wineId: w.id,
+    wineName: w.name,
+    producer: w.producer || '',
+    vintage: w.vintage || null,
+    grape: w.grape || '',
+    dateDrunk: document.getElementById('log_date').value || todayStr(),
+    notes: document.getElementById('log_notes').value.trim(),
+    loggedAt: Date.now()
+  };
+  drinkLog.push(entry);
+  saveDrinkLog(drinkLog);
+
+  if (document.getElementById('log_decrement').value === 'yes') {
+    w.quantity = Math.max(0, (parseInt(w.quantity) || 0) - 1);
+    saveWines(wines);
+  }
+
+  closeLogModal();
+  render();
+  renderLog();
+});
+
+document.getElementById('logSearch').addEventListener('input', renderLog);
+document.getElementById('logSortBy').addEventListener('change', renderLog);
+
+document.getElementById('logExportBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(drinkLog, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'drink-log.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('filterStatus').addEventListener('change', render);
+document.getElementById('filterGrape').addEventListener('change', render);
+document.getElementById('sortBy').addEventListener('change', render);
+document.getElementById('groupToggle').addEventListener('click', () => {
+  groupByGrape = !groupByGrape;
+  const btn = document.getElementById('groupToggle');
+  btn.setAttribute('aria-pressed', String(groupByGrape));
+  btn.textContent = groupByGrape ? '✓ Grouped by grape' : 'Group by grape';
+  render();
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(wines, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'wines.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+
+document.getElementById('importFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    try {
+      const imported = JSON.parse(evt.target.result);
+      if (!Array.isArray(imported)) throw new Error('Invalid format');
+      const merge = confirm('Click OK to merge with existing wines, or Cancel to replace the entire list.');
+      if (merge) {
+        const existingIds = new Set(wines.map(w => w.id));
+        imported.forEach(w => {
+          if (!w.id || existingIds.has(w.id)) w.id = cryptoId();
+          wines.push(w);
+        });
+      } else {
+        wines = imported;
+      }
+      saveWines(wines);
+      render();
+      alert('Import complete.');
+    } catch (err) {
+      alert('Could not read that file as a valid wine cellar backup.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+(async function init() {
+  wines = await loadWines();
+  drinkLog = await loadDrinkLog();
+  render();
+})();
+</script>
+</body>
+</html>
