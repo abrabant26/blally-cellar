@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Our Wine Cellar</title>
 <style>
   :root {
@@ -303,7 +304,8 @@
     font-size: 13px;
     line-height: 1;
   }
-  .card-actions { display: flex; gap: 6px; }
+  .card-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .card .bottom { flex-wrap: wrap; row-gap: 10px; }
 
   /* Modal */
   .overlay {
@@ -390,6 +392,45 @@
   }
   .publish-toast.error { background: #7a2020; }
   .publish-toast.ok { background: var(--green); }
+
+  @media (max-width: 640px) {
+    header { padding: 18px 16px 16px; }
+    header h1 { font-size: 21px; }
+    header p.sub { font-size: 12.5px; }
+    .stats { gap: 8px; margin-top: 14px; }
+    .stat { min-width: 0; flex: 1 1 calc(50% - 8px); padding: 8px 12px; }
+
+    .tabs { padding: 12px 16px 0; }
+    .toolbar {
+      max-width: none;
+      padding: 14px 16px 0;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .toolbar input[type=text], .toolbar select, .toolbar button { width: 100%; }
+
+    main { padding: 14px 16px 50px; }
+    .grid { grid-template-columns: 1fr; gap: 12px; }
+    .card { padding: 14px; }
+
+    .qty-control { font-size: 14px; }
+    .qty-control button { width: 32px; height: 32px; font-size: 16px; }
+    .card-actions { flex-wrap: wrap; width: 100%; gap: 8px; }
+    .card-actions .btn { flex: 1 1 auto; padding: 9px 10px; }
+
+    .overlay { padding: 0; align-items: flex-end; }
+    .modal { max-width: none; max-height: 92vh; border-radius: 14px 14px 0 0; padding: 18px; }
+    .form-grid { grid-template-columns: 1fr; }
+    input, textarea, select { font-size: 16px; } /* prevents iOS auto-zoom on focus */
+
+    .log-entry { flex-direction: column; align-items: stretch; gap: 8px; }
+    .log-entry > div:last-child { flex-direction: row; justify-content: space-between; align-items: center; }
+
+    .footer-bar { flex-direction: column; align-items: stretch; }
+    .footer-bar .btn { width: 100%; }
+
+    .publish-toast { left: 12px; right: 12px; bottom: 12px; max-width: none; text-align: center; }
+  }
 </style>
 </head>
 <body>
