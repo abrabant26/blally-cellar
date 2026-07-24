@@ -375,9 +375,26 @@
     font-size: 11.5px;
     margin-top: 10px;
   }
+  .publish-toast {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 50;
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    max-width: 320px;
+  }
+  .publish-toast.error { background: #7a2020; }
+  .publish-toast.ok { background: var(--green); }
 </style>
 </head>
 <body>
+
+<div id="publishToast" class="publish-toast" style="display:none;"></div>
 
 <header>
   <h1>🍷 Our Wine Cellar</h1>
@@ -424,7 +441,7 @@
       <button class="btn secondary" id="importBtn">Import a wines.json</button>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
-    <p class="hint">This page shows the last <strong>published</strong> version of the cellar. Changes you make here (add, edit, mark as drunk) stay on this device until you publish them: click "Download wines.json", then on GitHub upload that file into the <code>data/</code> folder of the <code>blally-cellar</code> repo, replacing the old one. The site updates within about a minute.</p>
+    <p class="hint">Changes you make here (add, edit, adjust quantity, delete) are saved live to everyone once you enter the edit password — look for the confirmation in the corner. The "Download wines.json" button below is just a manual backup/fallback if live saving isn't working.</p>
   </main>
 </div>
 
@@ -444,7 +461,7 @@
     <div class="footer-bar">
       <button class="btn secondary" id="logExportBtn">⬇ Download drink-log.json (to publish)</button>
     </div>
-    <p class="hint">Publish the same way: upload the downloaded file into <code>data/</code> on GitHub, replacing <code>drink-log.json</code>.</p>
+    <p class="hint">Tastings you log here save live the same way. "Download drink-log.json" is a manual backup/fallback only.</p>
   </main>
 </div>
 
@@ -563,6 +580,91 @@
 </div>
 
 <script>
+// Fill in after deploying the Cloudflare Worker (see blally-cellar-worker/),
+// e.g. 'https://blally-cellar-editor.<your-subdomain>.workers.dev'.
+const EDIT_API = 'https://blally-cellar-editor.flowvino.workers.dev';
+const EDIT_PW_KEY = 'wine_cellar_edit_pw';
+
+function getCachedPassword() {
+  return sessionStorage.getItem(EDIT_PW_KEY) || '';
+}
+function setCachedPassword(pw) {
+  if (pw) sessionStorage.setItem(EDIT_PW_KEY, pw);
+}
+function clearCachedPassword() {
+  sessionStorage.removeItem(EDIT_PW_KEY);
+}
+
+function setPublishStatus(text, kind) {
+  const el = document.getElementById('publishToast');
+  if (!text) {
+    el.style.display = 'none';
+    return;
+  }
+  el.textContent = text;
+  el.className = 'publish-toast' + (kind ? ' ' + kind : '');
+  el.style.display = 'block';
+  if (kind === 'ok') {
+    clearTimeout(setPublishStatus._t);
+    setPublishStatus._t = setTimeout(() => { el.style.display = 'none'; }, 2500);
+  }
+}
+
+// Commits the given file straight to the live GitHub repo via the
+// password-gated Worker, so changes made here show up on the published
+// site within about a minute — no manual download/upload step needed.
+async function publish(file, content, message) {
+  if (!EDIT_API || EDIT_API === 'REPLACE_WITH_WORKER_URL') {
+    setPublishStatus('Live editing isn\'t set up yet — saved on this device only.', 'error');
+    return { ok: false };
+  }
+
+  let pw = getCachedPassword();
+  if (!pw) {
+    pw = prompt('Enter the password to save changes to the live cellar:') || '';
+    if (!pw) {
+      setPublishStatus('Not published — saved on this device only.', 'error');
+      return { ok: false, cancelled: true };
+    }
+  }
+
+  setPublishStatus('Saving…');
+  try {
+    const res = await fetch(EDIT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw, file, content, message }),
+    });
+
+    if (res.status === 401) {
+      clearCachedPassword();
+      setPublishStatus('Wrong password — change saved on this device only.', 'error');
+      return { ok: false };
+    }
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `Save failed (${res.status})`);
+    }
+
+    setCachedPassword(pw);
+    setPublishStatus('Saved to the live site ✓', 'ok');
+    return { ok: true };
+  } catch (e) {
+    setPublishStatus('Could not reach the live site — saved on this device only. (' + e.message + ')', 'error');
+    return { ok: false, error: e.message };
+  }
+}
+
+let winesPublishTimer = null;
+function schedulePublishWines(message) {
+  clearTimeout(winesPublishTimer);
+  setPublishStatus('Saving…');
+  winesPublishTimer = setTimeout(() => { publish('wines.json', wines, message); }, 800);
+}
+function publishDrinkLog(message) {
+  return publish('drink-log.json', drinkLog, message);
+}
+
 const STORAGE_KEY = 'wine_cellar_data_v1';
 
 // Canonical reference data used both to seed a brand-new cellar and to patch
@@ -825,13 +927,16 @@ function adjustQty(id, delta) {
   w.quantity = Math.max(0, (parseInt(w.quantity) || 0) + delta);
   saveWines(wines);
   render();
+  schedulePublishWines(`Adjust quantity: ${w.name}`);
 }
 
 function deleteWine(id) {
   if (!confirm('Remove this wine from the cellar?')) return;
-  wines = wines.filter(w => w.id !== id);
+  const w = wines.find(x => x.id === id);
+  wines = wines.filter(x => x.id !== id);
   saveWines(wines);
   render();
+  schedulePublishWines(`Remove wine: ${w ? w.name : id}`);
 }
 
 function openAdd() {
@@ -915,6 +1020,7 @@ function deleteLogEntry(id) {
   drinkLog = drinkLog.filter(e => e.id !== id);
   saveDrinkLog(drinkLog);
   renderLog();
+  publishDrinkLog('Remove tasting log entry');
 }
 
 function switchTab(tab) {
@@ -1023,6 +1129,7 @@ document.getElementById('wineForm').addEventListener('submit', (e) => {
   saveWines(wines);
   closeModal();
   render();
+  publish('wines.json', wines, `${id ? 'Update' : 'Add'} wine: ${data.name}`);
 });
 
 document.getElementById('tabCellarBtn').addEventListener('click', () => switchTab('cellar'));
@@ -1055,7 +1162,8 @@ document.getElementById('logForm').addEventListener('submit', (e) => {
   drinkLog.push(entry);
   saveDrinkLog(drinkLog);
 
-  if (document.getElementById('log_decrement').value === 'yes') {
+  const decremented = document.getElementById('log_decrement').value === 'yes';
+  if (decremented) {
     w.quantity = Math.max(0, (parseInt(w.quantity) || 0) - 1);
     saveWines(wines);
   }
@@ -1063,6 +1171,13 @@ document.getElementById('logForm').addEventListener('submit', (e) => {
   closeLogModal();
   render();
   renderLog();
+
+  (async () => {
+    const logResult = await publishDrinkLog(`Log tasting: ${w.name}`);
+    if (decremented && logResult.ok) {
+      await publish('wines.json', wines, `Decrement quantity: ${w.name}`);
+    }
+  })();
 });
 
 document.getElementById('logSearch').addEventListener('input', renderLog);
