@@ -859,6 +859,7 @@ function cardHtml(w) {
           ${w.grape ? `<span class="tag" style="background:#f3e3ea; color:var(--wine-dark); font-weight:600;">🍇 ${escapeHtml(w.grape)}</span>` : ''}
           ${w.region ? `<span class="tag">${escapeHtml(w.region)}</span>` : ''}
           ${w.bin ? `<span class="tag">📍 ${escapeHtml(w.bin)}</span>` : ''}
+          ${w.needsResearch ? `<span class="tag" style="background:var(--amber-bg); color:var(--amber); font-weight:600;">⏳ Researching…</span>` : ''}
         </div>
         ${w.varietal ? `<div class="drink-window" style="color:var(--muted);">${escapeHtml(w.varietal)}</div>` : ''}
         ${w.rating ? `<div class="rating-row"><span class="rating-num">${w.rating}/100</span><span class="rating-word">${ratingWord(w.rating)}</span></div>` : ''}
@@ -1119,6 +1120,10 @@ document.getElementById('wineForm').addEventListener('submit', (e) => {
   };
 
   if (!data.name) return;
+
+  // No grape/drink-window data entered by hand — flag it so the scheduled
+  // research pass picks it up and fills those fields in via web search.
+  data.needsResearch = !data.grape || (!data.drinkFrom && !data.drinkTo);
 
   if (id) {
     const idx = wines.findIndex(w => w.id === id);
