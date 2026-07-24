@@ -253,7 +253,7 @@
     "varietal": "Grenache-dominant (Grenache, Syrah, Mourvèdre, Cinsault)",
     "grape": "Grenache Blend",
     "region": "Gigondas, Rhône, France",
-    "quantity": 1,
+    "quantity": 11,
     "price": 34,
     "purchaseSource": "Freedom Beverage Company",
     "purchaseDate": "2026-07-28",
@@ -277,24 +277,5 @@
     "drinkTo": 2046,
     "notes": "Possible duplicate of the Oddero Barolo bottle from the rack photo — verify and delete one if it's the same wine.",
     "addedAt": 1784896344893
-  },
-  {
-    "id": "w_wej0opjcmryzwona",
-    "addedAt": 1784900894662,
-    "name": "test wine",
-    "producer": "",
-    "vintage": null,
-    "varietal": "",
-    "grape": "",
-    "region": "",
-    "quantity": 1,
-    "price": null,
-    "rating": null,
-    "drinkFrom": null,
-    "drinkTo": null,
-    "bin": "",
-    "purchaseDate": "",
-    "purchaseSource": "",
-    "notes": ""
   }
 ]
