@@ -213,23 +213,6 @@
     "addedAt": 1784895944893
   },
   {
-    "id": "wine-erbaluce-di-caluso-metodo-classico",
-    "name": "Erbaluce di Caluso Metodo Classico",
-    "producer": "Bruno Giacometto",
-    "vintage": 2012,
-    "varietal": "100% Erbaluce",
-    "grape": "Erbaluce (Sparkling)",
-    "region": "Caluso, Piedmont, Italy",
-    "quantity": 1,
-    "price": 21.5,
-    "purchaseSource": "Freedom Beverage Company",
-    "purchaseDate": "2026-07-28",
-    "drinkFrom": 2014,
-    "drinkTo": 2027,
-    "notes": "Traditional-method Brut, min. 15 months on lees; producer rates aging potential at 10+ years from vintage.",
-    "addedAt": 1784896044893
-  },
-  {
     "id": "wine-chablis-vaillons-1er-cru",
     "name": "Chablis Vaillons 1er Cru",
     "producer": "Droin",
