@@ -286,5 +286,25 @@
     "purchaseSource": "",
     "notes": "",
     "needsResearch": true
+  },
+  {
+    "id": "w_wv1pmi87mtj6lfj5",
+    "addedAt": 1788298232801,
+    "name": "30,000 Maravedies",
+    "producer": "Bodegas Maranones",
+    "vintage": 2022,
+    "varietal": "",
+    "grape": "",
+    "region": "",
+    "quantity": 1,
+    "price": null,
+    "rating": null,
+    "drinkFrom": null,
+    "drinkTo": null,
+    "bin": "",
+    "purchaseDate": "",
+    "purchaseSource": "",
+    "notes": "",
+    "needsResearch": true
   }
 ]
