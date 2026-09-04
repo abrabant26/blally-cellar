@@ -522,7 +522,7 @@
         </div>
         <div>
           <label>Vintage</label>
-          <input type="number" id="f_vintage" placeholder="e.g. 2019">
+          <input type="text" id="f_vintage" placeholder="e.g. 2019 or NV">
         </div>
         <div>
           <label>Varietal / Blend detail</label>
@@ -799,6 +799,19 @@ let drinkLog = [];
 
 function currentYear() { return new Date().getFullYear(); }
 
+// Vintage can be a year ("2019") or a non-numeric label like "NV" (non-vintage).
+function parseVintage(raw) {
+  const v = String(raw || '').trim();
+  if (!v) return null;
+  return /^\d+$/.test(v) ? parseInt(v, 10) : v.toUpperCase();
+}
+
+// For sorting: numeric vintages sort by year; non-numeric ones (e.g. "NV") sort like unset.
+function vintageYear(v) {
+  const n = parseInt(v, 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
 function getStatus(w) {
   const y = currentYear();
   if (!w.drinkFrom && !w.drinkTo) return { key: 'none', label: 'No window set' };
@@ -871,8 +884,8 @@ function applyFiltersAndSort(list) {
   out.sort((a, b) => {
     switch (sortBy) {
       case 'name_asc': return (a.name||'').localeCompare(b.name||'');
-      case 'vintage_desc': return (b.vintage||0) - (a.vintage||0);
-      case 'vintage_asc': return (a.vintage||0) - (b.vintage||0);
+      case 'vintage_desc': return vintageYear(b.vintage) - vintageYear(a.vintage);
+      case 'vintage_asc': return vintageYear(a.vintage) - vintageYear(b.vintage);
       case 'rating_desc': return (b.rating||0) - (a.rating||0);
       case 'drinkby_asc': return (a.drinkTo||9999) - (b.drinkTo||9999);
       case 'added_desc':
@@ -1145,7 +1158,7 @@ document.getElementById('wineForm').addEventListener('submit', (e) => {
   const data = {
     name: document.getElementById('f_name').value.trim(),
     producer: document.getElementById('f_producer').value.trim(),
-    vintage: parseInt(document.getElementById('f_vintage').value) || null,
+    vintage: parseVintage(document.getElementById('f_vintage').value),
     varietal: document.getElementById('f_varietal').value.trim(),
     grape: document.getElementById('f_grape').value.trim(),
     region: document.getElementById('f_region').value.trim(),
