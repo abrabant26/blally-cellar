@@ -306,5 +306,25 @@
     "purchaseSource": "",
     "notes": "",
     "needsResearch": true
+  },
+  {
+    "id": "w_ot28xo8wmtnim7g1",
+    "addedAt": 1788560289073,
+    "name": "Champagne Françoise Bedel Comme Autrefois — disg. 2017",
+    "producer": "",
+    "vintage": null,
+    "varietal": "",
+    "grape": "",
+    "region": "",
+    "quantity": 1,
+    "price": null,
+    "rating": null,
+    "drinkFrom": 2026,
+    "drinkTo": 2030,
+    "bin": "",
+    "purchaseDate": "",
+    "purchaseSource": "",
+    "notes": "",
+    "needsResearch": true
   }
 ]
