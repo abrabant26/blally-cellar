@@ -326,5 +326,25 @@
     "purchaseSource": "",
     "notes": "",
     "needsResearch": true
+  },
+  {
+    "id": "w_9wvec1gfmtnin618",
+    "addedAt": 1788560333900,
+    "name": "Franciacorta Anno Domini NV — disg. 2022",
+    "producer": "",
+    "vintage": null,
+    "varietal": "",
+    "grape": "",
+    "region": "",
+    "quantity": 1,
+    "price": null,
+    "rating": null,
+    "drinkFrom": 2026,
+    "drinkTo": 2028,
+    "bin": "",
+    "purchaseDate": "",
+    "purchaseSource": "",
+    "notes": "",
+    "needsResearch": true
   }
 ]
