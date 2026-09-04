@@ -346,5 +346,25 @@
     "purchaseSource": "",
     "notes": "",
     "needsResearch": true
+  },
+  {
+    "id": "w_5fdx67r4mtnio2ep",
+    "addedAt": 1788560375857,
+    "name": "Erbaluce Spumante Giacometto",
+    "producer": "",
+    "vintage": 2013,
+    "varietal": "",
+    "grape": "",
+    "region": "",
+    "quantity": 1,
+    "price": null,
+    "rating": null,
+    "drinkFrom": 2026,
+    "drinkTo": 2028,
+    "bin": "",
+    "purchaseDate": "",
+    "purchaseSource": "",
+    "notes": "",
+    "needsResearch": true
   }
 ]
