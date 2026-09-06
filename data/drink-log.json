@@ -9,5 +9,16 @@
     "dateDrunk": "2026-08-30",
     "notes": "",
     "loggedAt": 1788049277947
+  },
+  {
+    "id": "w_9p0n1pygmtqdc4ma",
+    "wineId": "w_wv1pmi87mtj6lfj5",
+    "wineName": "30,000 Maravedies",
+    "producer": "Bodegas Maranones",
+    "vintage": 2022,
+    "grape": "",
+    "dateDrunk": "2026-09-06",
+    "notes": "",
+    "loggedAt": 1788732819298
   }
 ]
