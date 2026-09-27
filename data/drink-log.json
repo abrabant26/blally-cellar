@@ -42,5 +42,16 @@
     "dateDrunk": "2026-09-22",
     "notes": "",
     "loggedAt": 1790040810442
+  },
+  {
+    "id": "w_paaqmaismukdmc2y",
+    "wineId": "w_9wvec1gfmtnin618",
+    "wineName": "Franciacorta Anno Domini NV — disg. 2022",
+    "producer": "47 Anno Domini",
+    "vintage": null,
+    "grape": "Chardonnay (Sparkling)",
+    "dateDrunk": "2026-09-27",
+    "notes": "",
+    "loggedAt": 1790547280810
   }
 ]
