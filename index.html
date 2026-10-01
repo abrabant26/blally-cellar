@@ -1175,21 +1175,51 @@ document.getElementById('wineForm').addEventListener('submit', (e) => {
 
   if (!data.name) return;
 
-  // No grape/drink-window data entered by hand — flag it so the scheduled
-  // research pass picks it up and fills those fields in via web search.
+  // No grape/drink-window data entered by hand — flag it so the Worker
+  // researches it right after this save (with a daily cron as backup).
   data.needsResearch = !data.grape || (!data.drinkFrom && !data.drinkTo);
 
+  const wineId = id || cryptoId();
   if (id) {
     const idx = wines.findIndex(w => w.id === id);
     if (idx > -1) wines[idx] = { ...wines[idx], ...data };
   } else {
-    wines.push({ id: cryptoId(), addedAt: Date.now(), ...data });
+    wines.push({ id: wineId, addedAt: Date.now(), ...data });
   }
   saveWines(wines);
   closeModal();
   render();
-  publish('wines.json', wines, `${id ? 'Update' : 'Add'} wine: ${data.name}`);
+  publish('wines.json', wines, `${id ? 'Update' : 'Add'} wine: ${data.name}`).then(res => {
+    if (res.ok && data.needsResearch) requestResearch(wineId);
+  });
 });
+
+// Asks the Worker to research a just-saved wine (web search via Claude) and
+// commit the result. Takes a minute or so; the card shows "Researching…" in
+// the meantime. Results are merged into the local copy too, so the next save
+// from this tab doesn't overwrite them with blanks.
+async function requestResearch(wineId) {
+  const pw = getCachedPassword();
+  if (!pw) return;
+  try {
+    const res = await fetch(EDIT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw, action: 'research', wineId }),
+    });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || out.status !== 'researched') return; // stays flagged for the daily pass
+    const w = wines.find(x => x.id === wineId);
+    if (!w) return;
+    for (const field of ['varietal', 'grape', 'drinkFrom', 'drinkTo']) {
+      if (!w[field] && out.wine[field]) w[field] = out.wine[field];
+    }
+    w.needsResearch = false;
+    saveWines(wines);
+    render();
+    setPublishStatus(`Researched ${w.name} ✓`, 'ok');
+  } catch (e) { /* daily research pass will pick it up */ }
+}
 
 document.getElementById('tabCellarBtn').addEventListener('click', () => switchTab('cellar'));
 document.getElementById('tabLogBtn').addEventListener('click', () => switchTab('log'));
