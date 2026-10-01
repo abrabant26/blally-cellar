@@ -1176,7 +1176,7 @@ document.getElementById('wineForm').addEventListener('submit', (e) => {
   if (!data.name) return;
 
   // No grape/drink-window data entered by hand — flag it so the Worker
-  // researches it right after this save (with a daily cron as backup).
+  // researches it right after this save (with a weekly cron as backup).
   data.needsResearch = !data.grape || (!data.drinkFrom && !data.drinkTo);
 
   const wineId = id || cryptoId();
@@ -1208,7 +1208,7 @@ async function requestResearch(wineId) {
       body: JSON.stringify({ password: pw, action: 'research', wineId }),
     });
     const out = await res.json().catch(() => ({}));
-    if (!res.ok || out.status !== 'researched') return; // stays flagged for the daily pass
+    if (!res.ok || out.status !== 'researched') return; // stays flagged for the weekly pass
     const w = wines.find(x => x.id === wineId);
     if (!w) return;
     for (const field of ['varietal', 'grape', 'drinkFrom', 'drinkTo']) {
@@ -1218,7 +1218,7 @@ async function requestResearch(wineId) {
     saveWines(wines);
     render();
     setPublishStatus(`Researched ${w.name} ✓`, 'ok');
-  } catch (e) { /* daily research pass will pick it up */ }
+  } catch (e) { /* weekly research pass will pick it up */ }
 }
 
 document.getElementById('tabCellarBtn').addEventListener('click', () => switchTab('cellar'));
