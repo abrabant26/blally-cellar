@@ -366,5 +366,25 @@
     "purchaseSource": "",
     "notes": "",
     "needsResearch": false
+  },
+  {
+    "id": "w_fcg4nypbmvciqg02",
+    "addedAt": 1792248923522,
+    "name": "Bukkuram Padre Della Vigna",
+    "producer": "Marco de Bartoli",
+    "vintage": 2021,
+    "varietal": "",
+    "grape": "",
+    "region": "",
+    "quantity": 1,
+    "price": null,
+    "rating": null,
+    "drinkFrom": 2024,
+    "drinkTo": 2045,
+    "bin": "",
+    "purchaseDate": "",
+    "purchaseSource": "",
+    "notes": "",
+    "needsResearch": true
   }
 ]
