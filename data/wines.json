@@ -373,8 +373,8 @@
     "name": "Bukkuram Padre Della Vigna",
     "producer": "Marco de Bartoli",
     "vintage": 2021,
-    "varietal": "",
-    "grape": "",
+    "varietal": "100% Zibibbo",
+    "grape": "Zibibbo (Passito)",
     "region": "",
     "quantity": 1,
     "price": null,
@@ -385,6 +385,6 @@
     "purchaseDate": "",
     "purchaseSource": "",
     "notes": "",
-    "needsResearch": true
+    "needsResearch": false
   }
 ]
