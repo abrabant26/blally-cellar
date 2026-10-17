@@ -393,8 +393,8 @@
     "name": "Tancredi",
     "producer": "Donnafugata",
     "vintage": 2021,
-    "varietal": "",
-    "grape": "",
+    "varietal": "Cabernet Sauvignon, Nero d'Avola, Tannat",
+    "grape": "Nero d'Avola Blend (Cabernet Sauvignon-based)",
     "region": "",
     "quantity": 1,
     "price": null,
@@ -405,6 +405,6 @@
     "purchaseDate": "2026-10-15",
     "purchaseSource": "",
     "notes": "",
-    "needsResearch": true
+    "needsResearch": false
   }
 ]
