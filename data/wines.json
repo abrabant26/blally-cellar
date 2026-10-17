@@ -386,5 +386,25 @@
     "purchaseSource": "",
     "notes": "",
     "needsResearch": false
+  },
+  {
+    "id": "w_rgq47tsnmvcirlrf",
+    "addedAt": 1792248977643,
+    "name": "Tancredi",
+    "producer": "Donnafugata",
+    "vintage": 2021,
+    "varietal": "",
+    "grape": "",
+    "region": "",
+    "quantity": 1,
+    "price": null,
+    "rating": null,
+    "drinkFrom": 2025,
+    "drinkTo": 2035,
+    "bin": "",
+    "purchaseDate": "2026-10-15",
+    "purchaseSource": "",
+    "notes": "",
+    "needsResearch": true
   }
 ]
